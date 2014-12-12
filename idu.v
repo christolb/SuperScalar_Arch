@@ -50,7 +50,7 @@ module idu #
    input [NUM_RS/4-1:0]     store_done
 
    // Register status table to outside logic
-   output                   reg_status_table[0:NUM_REG], 
+   //output                   reg_status_table[0:NUM_REG] 
 
 );
 
@@ -63,12 +63,20 @@ localparam STORE_0 = 4'b0111; localparam STORE_1 = 4'b1000;
 
 // Reservation Status table: Stores the busy status
 // for each reservation station
-reg rs_status_table[0:NUM_RS] = 0;
+reg rs_status_table[0:NUM_RS] ;
 
 // Register Status table: Stores the tag from
 // which each register obtains its value + status
 // bit which indicates whether it's busy
-reg [TAG_LEN+1-1:0] reg_status_table[0:NUM_REG] = 0;
+reg [TAG_LEN+1-1:0] reg_status_table[0:NUM_REG] ;
+
+// Wires and signals
+reg [TAG_LEN-1:0] instruction1_src0, instruction1_src1, instruction2_src0, instruction2_src1;
+reg [TAG_LEN-1:0] instruction1_rs, instruction2_rs;
+reg               inst1_stall, inst2_stall;
+reg               dispatch_inst1, dispatch_inst2;
+reg [TAG_LEN-1:0] inst1_rs, inst2_rs;
+wire              inst2_to_inst1;
 
 // Instruction 1 and 2 : Check for dependencies
 always @(*)
@@ -255,20 +263,20 @@ if(clk) // Positive phase of clock
 begin
     if(dispatch_inst1)
     begin
-        intruction1_rs    = inst1_rs;
+        instruction1_rs    = inst1_rs;
         instruction1_src0 = inst_1_src0;
         instruction1_src1 = inst_1_src1;
     end
     if(dispatch_inst2)
     begin
-        intruction2_rs    = inst2_rs;
+        instruction2_rs    = inst2_rs;
         instruction2_src0 = inst_2_src0;
         instruction2_src1 = inst_2_src1;
     end
 end
 
 // Collect outputs
-assign instruction1 = {intruction1_rs, intruction1_src0, intruction1_src1}; 
-assign instruction2 = {intruction2_rs, intruction2_src0, intruction2_src1}; 
+assign instruction1 = {instruction1_rs, instruction1_src0, instruction1_src1}; 
+assign instruction2 = {instruction2_rs, instruction2_src0, instruction2_src1}; 
 
 endmodule

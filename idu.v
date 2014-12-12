@@ -84,8 +84,11 @@ begin // {
    // INSTRUCTION 1 DEPENDENCY CHECKS
    ////////////////////////////////////////////////////////////////////////////////////////
    if( (inst_1_src0 == instruction2_rs) || (inst_1_src1 == instruction2_rs) )  // RAW hazard check
+   begin
+       instruction1_src0 = (inst_1_src0 == instruction2_rs) ? instruction2_rs : inst_1_src0;      
+       instruction1_src1 = (inst_1_src1 == instruction2_rs) ? instruction2_rs : inst_1_src1;      
        inst1_stall = 1;
-   else
+   end else
        inst1_stall = 0;
    if (!inst1_stall || inst2_to_inst1) begin // {
       case(inst_1_type) // {
@@ -164,8 +167,11 @@ begin // {
    // INSTRUCTION 2 DEPENDENCY CHECKS
    ////////////////////////////////////////////////////////////////////////////////////////
    if( (inst_2_src0 == instruction1_rs) || (inst_2_src1 == instruction1_rs) )  // RAW hazard check
+   begin
        inst2_stall = 1;
-   else 
+       instruction2_src0 = (inst_2_src0 == instruction1_rs) ? instruction1_rs : inst_2_src0;      
+       instruction2_src1 = (inst_2_src1 == instruction1_rs) ? instruction1_rs : inst_2_src1;      
+   end else 
        inst2_stall = 1;
    if(!inst2_stall) begin // {
       case(inst_2_type) // {
